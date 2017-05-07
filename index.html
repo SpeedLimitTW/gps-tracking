@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>GPS Tracknig Feature</title>
+</head>
+<body>
+	<div id="data"></div>
+	<button onclick="save()">Download</button>
+	<script type="text/javascript">
+
+		var serial = document.getElementById("data");
+
+		setInterval(requestGPSData,2000);
+
+		function getLocation() {
+		    if (navigator.geolocation) {
+		        navigator.geolocation.getCurrentPosition(showPosition);
+		    } else { 
+		        serial.innerHTML = "Geolocation is not supported by this browser.";
+		    }
+		}
+
+		function showPosition(position) {
+		    writeLocation("{\"latitude\":"+position.coords.latitude+", \"longitude\":"+position.coords.longitude+"}");
+		}
+
+
+		function requestGPSData(){
+			getLocation();
+		}
+
+		function writeLocation(location){
+			console.log(serial.innerHTML + ", length = " + serial.innerHTML.length);
+			if(serial.innerHTML == "" || serial.innerHTML.length == 0){
+				serial.innerHTML += location;
+			}else{
+				serial.innerHTML += ("," + location);
+			}
+		}
+
+		function save(){
+			var highestIntervalId = setInterval(";");
+			for (var i = 0 ; i < highestIntervalId ; i++) {
+			    clearInterval(i); 
+			}
+			download("[" + (serial.innerHTML) + "]", "gps_data.json", "plain/text");
+		}
+
+		function download(data, filename, type) {
+		    var file = new Blob([data], {type: type});
+		    if (window.navigator.msSaveOrOpenBlob) // IE10+
+		        window.navigator.msSaveOrOpenBlob(file, filename);
+		    else { // Others
+		        var a = document.createElement("a"),
+		                url = URL.createObjectURL(file);
+		        a.href = url;
+		        a.download = filename;
+		        document.body.appendChild(a);
+		        a.click();
+		        setTimeout(function() {
+		            document.body.removeChild(a);
+		            window.URL.revokeObjectURL(url);  
+		        }, 0); 
+		    }
+		}
+	</script>
+</body>
+</html>
